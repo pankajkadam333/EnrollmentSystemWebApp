@@ -145,3 +145,4 @@ C:\Users\Pankaj.Kadam\Downloads\EnrollmentDashboardWebApp\EnrollmentDashboardWeb
 C:\Users\Pankaj.Kadam\Downloads\EnrollmentDashboardWebApp\EnrollmentDashboardWebApp\EnrollmentDashboard\obj\Debug\net10.0\EnrollmentDashboard.pdb
 C:\Users\Pankaj.Kadam\Downloads\EnrollmentDashboardWebApp\EnrollmentDashboardWebApp\EnrollmentDashboard\obj\Debug\net10.0\EnrollmentDashboard.genruntimeconfig.cache
 C:\Users\Pankaj.Kadam\Downloads\EnrollmentDashboardWebApp\EnrollmentDashboardWebApp\EnrollmentDashboard\obj\Debug\net10.0\ref\EnrollmentDashboard.dll
+C:\Users\Pankaj.Kadam\Downloads\EnrollmentDashboardWebApp\EnrollmentDashboardWebApp\EnrollmentDashboard\obj\Debug\net10.0\EnrollmentDashboard.sourcelink.json

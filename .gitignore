@@ -104,3 +104,5 @@ paket-files/
 Logs/
 *.log
 /EnrollmentDashboard/.vs/EnrollmentDashboard.slnx/v18/.suo
+/EnrollmentDashboard/Logs/enrollment-20260430.log
+/EnrollmentDashboard/bin/**
