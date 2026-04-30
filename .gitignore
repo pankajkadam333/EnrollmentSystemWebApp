@@ -103,3 +103,4 @@ paket-files/
 # Serilog log files
 Logs/
 *.log
+/EnrollmentDashboard/.vs/EnrollmentDashboard.slnx/v18/.suo
