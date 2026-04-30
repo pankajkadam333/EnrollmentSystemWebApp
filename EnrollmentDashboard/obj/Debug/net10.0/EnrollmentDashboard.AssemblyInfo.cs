@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EnrollmentDashboard")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+33291128466f1b49868982ee90744a2243ab685a")]
 [assembly: System.Reflection.AssemblyProductAttribute("EnrollmentDashboard")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EnrollmentDashboard")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
