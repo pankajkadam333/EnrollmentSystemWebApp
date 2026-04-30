@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../EnrollmentDashboard.Tests/EnrollmentDashboard.Tests.csproj" />
+  <Project Path="EnrollmentDashboard.csproj" />
+</Solution>

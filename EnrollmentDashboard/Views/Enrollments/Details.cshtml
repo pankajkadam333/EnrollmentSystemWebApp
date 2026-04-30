@@ -1,0 +1,93 @@
+@model EnrollmentDashboard.Models.ViewModels.EnrollmentDetailViewModel
+@{
+    ViewData["Title"] = "Enrollment Details";
+}
+
+<h1>Enrollment Details</h1>
+
+<div class="row">
+    <!-- Enrollment Info -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Enrollment Information</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Enrollment ID</dt>
+                    <dd class="col-sm-7">@Model.EnrollmentID</dd>
+
+                    <dt class="col-sm-5">Enrollment Date</dt>
+                    <dd class="col-sm-7">@Model.EnrollmentDate.ToString("yyyy-MM-dd")</dd>
+
+                    <dt class="col-sm-5">Completion Date</dt>
+                    <dd class="col-sm-7">@(Model.CompletionDate?.ToString("yyyy-MM-dd") ?? "N/A")</dd>
+
+                    <dt class="col-sm-5">Status</dt>
+                    <dd class="col-sm-7">
+                        <span class="badge @(Model.Status switch
+                        {
+                            "Active" => "bg-success",
+                            "Completed" => "bg-info",
+                            "Withdrawn" => "bg-warning text-dark",
+                            _ => "bg-secondary"
+                        })">
+                            @Model.Status
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participant Info -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Participant</h5></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Name</dt>
+                    @* Auto-encoded by Razor — safe against XSS *@
+                    <dd class="col-sm-7">@Model.ParticipantFullName</dd>
+
+                    <dt class="col-sm-5">Date of Birth</dt>
+                    <dd class="col-sm-7">@Model.DateOfBirth.ToString("yyyy-MM-dd")</dd>
+
+                    <dt class="col-sm-5">Active</dt>
+                    <dd class="col-sm-7">
+                        @if (Model.ParticipantActive)
+                        {
+                            <span class="badge bg-success">Yes</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">No</span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Program Info -->
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0">Program</h5></div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Program Name</dt>
+            <dd class="col-sm-9">@Model.ProgramName</dd>
+
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">@(Model.ProgramDescription ?? "No description available.")</dd>
+        </dl>
+    </div>
+</div>
+
+<!-- Notes (securely rendered — no Html.Raw) -->
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0">Notes</h5></div>
+    <div class="card-body">
+        <p>@(Model.Notes ?? "No notes.")</p>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary">Back to Dashboard</a>

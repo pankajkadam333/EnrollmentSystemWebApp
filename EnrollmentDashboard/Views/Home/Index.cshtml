@@ -1,0 +1,230 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<h1>Getting Started </h1>
+<h2> Features, Security Tests &amp; Configuration Guide</h2>
+<p class="lead">Everything you need to explore the Enrollment Dashboard: how to use each feature, verify security protections, and configure the application.</p>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Dashboard</h5>
+                <p class="card-text">View all enrollments with summary statistics, filter by date range and status, and paginate through results.</p>
+                <a asp-controller="Enrollments" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Detail View</h5>
+                <p class="card-text">Click "Details" on any enrollment to see full participant info, program details, and notes (securely rendered).</p>
+                <a asp-controller="Enrollments" asp-action="Details" asp-route-id="1" class="btn btn-outline-primary">Example: Enrollment #1</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Configuration</h5>
+                <p class="card-text">Toggle between mock data and SQL Server, configure logging sinks — all from <code>appsettings.json</code>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<!-- Features & How to Test -->
+<h2 class="mt-4">Features &amp; How to Test</h2>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Summary Statistics Cards</h5></div>
+    <div class="card-body">
+        <ul>
+            <li>Four cards at the top of the dashboard: Total, Active, Completed, Withdrawn</li>
+            <li>Active, Completed, and Withdrawn cards are <strong>clickable</strong> — click to filter, click again to clear</li>
+            <li>Counts update based on current date filters</li>
+        </ul>
+        <p><strong>Try it:</strong> Go to <a asp-controller="Enrollments" asp-action="Index">/Enrollments</a> and click the "Active" card. Click it again to clear the filter.</p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Date Range &amp; Status Filters</h5></div>
+    <div class="card-body">
+        <ul>
+            <li>Pick a Start Date and End Date, then click Filter</li>
+            <li>Select a status from the dropdown or click a summary card</li>
+            <li>Client-side validation prevents Start Date &gt; End Date</li>
+            <li>Filters are preserved across pagination</li>
+        </ul>
+        <p><strong>Try it:</strong> Set Start Date to <code>2026-01-01</code>, End Date to <code>2026-01-31</code>, click Filter — should show 4 enrollments.</p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Pagination</h5></div>
+    <div class="card-body">
+        <ul>
+            <li>10 enrollments per page</li>
+            <li>Previous/Next buttons and page numbers at the bottom</li>
+        </ul>
+        <p><strong>Try it:</strong> With no filters applied, navigate to page 3 — should show 5 remaining enrollments out of 25 total.</p>
+    </div>
+</div>
+
+<hr />
+
+<!-- Security Tests -->
+<h2 class="mt-4">Security Tests</h2>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">1. SQL Injection Prevention</h5></div>
+    <div class="card-body">
+        <p>All queries use parameterized <code>SqlParameter</code> or stored procedures. Status values are validated against an allowlist.</p>
+        <p><strong>Try it:</strong> Visit
+            <a href="/Enrollments?status=%27%3B%20DROP%20TABLE%20Enrollments--">/Enrollments?status='; DROP TABLE Enrollments--</a>
+            — the malicious status is rejected, all 25 records remain intact.
+        </p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">2. XSS Prevention</h5></div>
+    <div class="card-body">
+        <p>All Razor output uses <code>@@</code> encoding. No <code>Html.Raw()</code> anywhere. Participant #6 has <code>&lt;script&gt;</code> in their last name.</p>
+        <p><strong>Try it:</strong> Visit
+            <a asp-controller="Enrollments" asp-action="Details" asp-route-id="5">/Enrollments/Details/5</a>
+            — the script tag renders as visible text, no JavaScript executes.
+        </p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">3. IDOR Protection</h5></div>
+    <div class="card-body">
+        <p>IDs are validated at controller and service layers. Non-existent or invalid IDs return HTTP 404.</p>
+        <p><strong>Try it:</strong>
+            <a asp-controller="Enrollments" asp-action="Details" asp-route-id="9999">/Enrollments/Details/9999</a> (non-existent) —
+            returns 404.
+        </p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">4. Input Validation</h5></div>
+    <div class="card-body">
+        <ul>
+            <li><strong>Status:</strong> Validated against <code>["Active", "Completed", "Withdrawn"]</code> — invalid values silently ignored</li>
+            <li><strong>Dates:</strong> Typed as <code>DateTime?</code> — non-dates rejected by model binding, reversed ranges auto-swapped</li>
+            <li><strong>Page number:</strong> Clamped to minimum of 1</li>
+        </ul>
+        <p><strong>Try it:</strong> Visit
+            <a href="/Enrollments?status=HACKED">/Enrollments?status=HACKED</a>
+            — shows all enrollments (invalid status ignored).
+        </p>
+    </div>
+</div>
+
+<hr />
+
+<!-- Configuration -->
+<h2 class="mt-4">Configuration</h2>
+<p>All settings are in <code>appsettings.json</code>. No code changes needed to switch behavior.</p>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">UseMockData — Data Source Toggle</h5></div>
+    <div class="card-body">
+        <table class="table table-bordered mb-0">
+            <thead class="table-light">
+                <tr><th>Setting</th><th>Behavior</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>"UseMockData": true</code></td>
+                    <td>Runs with in-memory data (25 enrollments, 15 participants, 8 programs from <code>sample-data.sql</code>). No database required.</td>
+                </tr>
+                <tr>
+                    <td><code>"UseMockData": false</code></td>
+                    <td>Connects to SQL Server using the <code>DefaultConnection</code> string. Requires database with schema and data loaded.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Serilog — Logging Configuration</h5></div>
+    <div class="card-body">
+        <p>Logging uses Serilog with configurable sinks. Edit the <code>WriteTo</code> array to control where logs go:</p>
+        <table class="table table-bordered mb-3">
+            <thead class="table-light">
+                <tr><th>Sink</th><th>Purpose</th><th>Output</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>Console</code></td>
+                    <td>Real-time log output in terminal</td>
+                    <td><code>[19:48:47 INF] HTTP GET /Enrollments responded 200 in 107ms</code></td>
+                </tr>
+                <tr>
+                    <td><code>File</code></td>
+                    <td>Persistent daily log files</td>
+                    <td><code>Logs/enrollment-2026-04-30.log</code> — rolls daily, retains 7 days</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>To use only one sink, remove the other from the <code>WriteTo</code> array. No rebuild needed.</p>
+        <p><strong>What gets logged:</strong> Every HTTP request (method, path, status, duration), dashboard filter parameters, validation warnings (reversed dates, invalid status, non-existent IDs), and startup/shutdown events.</p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">ConnectionStrings</h5></div>
+    <div class="card-body">
+        <p>Only used when <code>UseMockData</code> is <code>false</code>.</p>
+        <pre class="bg-light p-2 rounded"><code>"DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=EnrollmentSystem;Integrated Security=true;TrustServerCertificate=true;"</code></pre>
+        <p>Update the server name if your SQL Server instance differs.</p>
+    </div>
+</div>
+
+<hr />
+
+<!-- Architecture -->
+<h2 class="mt-4">Architecture</h2>
+<div class="card mb-3">
+    <div class="card-body">
+        <pre class="mb-0">
+Models/          — Domain entities (Participant, Program, Enrollment) and ViewModels
+DataAccess/      — Repository pattern: IEnrollmentRepository → InMemoryEnrollmentRepository or EnrollmentRepository
+Business/        — Service layer: validation, filtering, orchestration
+Controllers/     — Thin controllers: HTTP → Service → View
+Views/           — Razor views with auto-encoded output (XSS-safe)
+Tests/           — 56 unit + integration tests (xUnit + Moq)</pre>
+        <p class="mt-2 mb-0"><strong>Data flow:</strong> Controller → Service (validates input) → Repository (fetches data) → ViewModel → Razor View (encodes output)</p>
+    </div>
+</div>
+
+<hr />
+
+<!-- Test Suite -->
+<h2 class="mt-4">Test Suite</h2>
+<div class="card mb-4">
+    <div class="card-body">
+        <p>Run with: <code>dotnet test EnrollmentDashboard.Tests/EnrollmentDashboard.Tests.csproj</code></p>
+        <table class="table table-bordered mb-0">
+            <thead class="table-light">
+                <tr><th>Test Class</th><th>Tests</th><th>Covers</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>InMemoryEnrollmentRepositoryTests</td><td>20</td><td>Filtering, pagination, ordering, date ranges, XSS data, summary stats</td></tr>
+                <tr><td>EnrollmentServiceTests</td><td>13</td><td>Date swap, status whitelist, malicious input, page clamping</td></tr>
+                <tr><td>EnrollmentsControllerTests</td><td>7</td><td>HTTP responses, NotFound for invalid IDs</td></tr>
+                <tr><td>DashboardIntegrationTests</td><td>10</td><td>Full pipeline end-to-end, consistency, pagination</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
